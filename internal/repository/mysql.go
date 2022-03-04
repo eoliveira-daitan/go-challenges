@@ -128,8 +128,8 @@ func (mr *MySQLRepository) CreateTask(task Task) (int64, error) {
 	return id, nil
 }
 
-func (mr *MySQLRepository) UpdateTask(task Task) (int64, error) {
-	result, err := mr.db.Exec(updateTask, task.Name, task.Completed, task.ID)
+func (mr *MySQLRepository) UpdateTask(id int64, task Task) (int64, error) {
+	result, err := mr.db.Exec(updateTask, task.Name, task.Completed, id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to update task: %+v. Error:\n%v", task, err)
 	}
@@ -140,8 +140,8 @@ func (mr *MySQLRepository) UpdateTask(task Task) (int64, error) {
 	}
 
 	if affected == 0 {
-		return 0, fmt.Errorf("failed to update task: %+v. Error:\ntask(%d) not found", task, task.ID)
+		return 0, fmt.Errorf("failed to update task: %+v. Error:\ntask(%d) not found", task, id)
 	}
 
-	return task.ID, nil
+	return id, nil
 }

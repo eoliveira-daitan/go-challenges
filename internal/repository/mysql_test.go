@@ -232,7 +232,7 @@ func TestUpdateTask(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			c.mock(c.task)
-			got, err := repo.UpdateTask(c.task)
+			got, err := repo.UpdateTask(c.task.ID, c.task)
 			if err != nil {
 				t.Errorf("got err: %q", err.Error())
 				return

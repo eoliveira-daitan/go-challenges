@@ -2,23 +2,30 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/eoliveira-daitan/go-challenges/internal/repository"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Create a .env file in the root directory. Use `.env.example` as a start point")
+	}
+
 	var repo repository.Repository
 
 	cfg := repository.MysqlConfig{
 		User:   os.Getenv("DBUSER"),
 		Pass:   os.Getenv("DBPASS"),
-		Host:   "127.0.0.1",
+		Host:   os.Getenv("DBHOST"),
 		Port:   os.Getenv("DBPORT"),
 		DBName: os.Getenv("DBNAME"),
 	}
 
-	repo, err := repository.NewMySQLRepository(cfg)
+	repo, err = repository.NewMySQLRepository(cfg)
 	handleErr(err)
 
 	taskID, err := repo.CreateTask(repository.Task{Name: "Create a dummy task", Completed: false})
@@ -30,7 +37,7 @@ func main() {
 	fmt.Printf("Task found: %+v\n", task)
 
 	task.Completed = true
-	taskID, err = repo.UpdateTask(task)
+	taskID, err = repo.UpdateTask(task.ID, task)
 	handleErr(err)
 	fmt.Printf("Task updated: %d\n", taskID)
 
