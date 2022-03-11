@@ -39,6 +39,16 @@ func main() {
 		port = "3000"
 	}
 
+	dbImpl := strings.ToUpper(os.Getenv("DBIMPL"))
+	if dbImpl == "" {
+		dbImpl = VANILLA
+	}
+
+	bearerToken := "Bearer " + os.Getenv("BEARER_TOKEN")
+	auth := func(token string) bool {
+		return bearerToken == token
+	}
+
 	cfg := repository.DBConfig{
 		User:   os.Getenv("DBUSER"),
 		Pass:   os.Getenv("DBPASS"),
@@ -47,13 +57,11 @@ func main() {
 		DBName: os.Getenv("DBNAME"),
 	}
 
-	dbImpl := strings.ToUpper(os.Getenv("DBIMPL"))
-
 	var repo repository.Repository
 	repo, err = initRepository(dbImpl, cfg)
 	handleErr(err)
 
-	server := api.New(repo)
+	server := api.New(repo, auth)
 
 	fmt.Printf("Server listening on port: %s\n", port)
 

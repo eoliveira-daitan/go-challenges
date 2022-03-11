@@ -14,12 +14,14 @@ import (
 
 type Server struct {
 	Store repository.Repository
+	Auth  func(string) bool
 	http.Handler
 }
 
-func New(store repository.Repository) *Server {
+func New(store repository.Repository, auth func(string) bool) *Server {
 	s := new(Server)
 	s.Store = store
+	s.Auth = auth
 
 	router := http.NewServeMux()
 
@@ -46,6 +48,12 @@ func handleResponse(w http.ResponseWriter, statusCode int, body string) {
 }
 
 func (s *Server) HandleTasks(w http.ResponseWriter, r *http.Request) {
+	bearer := r.Header.Get("Authorization")
+	if !s.Auth(bearer) {
+		handleResponse(w, http.StatusForbidden, "Not authorized")
+		return
+	}
+
 	path := r.URL.Path
 
 	if !strings.Contains(path, "/tasks") {
