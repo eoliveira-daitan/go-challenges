@@ -7,15 +7,6 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-type MysqlConfig struct {
-	User     string
-	Pass     string
-	Protocol string
-	Host     string
-	Port     string
-	DBName   string
-}
-
 type MySQLRepository struct {
 	db *sql.DB
 }
@@ -28,7 +19,7 @@ const (
 	taskByCompleted = "SELECT * FROM task WHERE completed = ?;"
 )
 
-func NewMySQLRepository(cfg MysqlConfig) (*MySQLRepository, error) {
+func NewMySQLRepository(cfg DBConfig) (*MySQLRepository, error) {
 	c := mysql.Config{
 		User:   cfg.User,
 		Passwd: cfg.Pass,

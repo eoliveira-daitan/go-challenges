@@ -17,7 +17,7 @@ func main() {
 
 	var repo repository.Repository
 
-	cfg := repository.MysqlConfig{
+	cfg := repository.DBConfig{
 		User:   os.Getenv("DBUSER"),
 		Pass:   os.Getenv("DBPASS"),
 		Host:   os.Getenv("DBHOST"),

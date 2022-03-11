@@ -5,11 +5,28 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/eoliveira-daitan/go-challenges/internal/api"
 	"github.com/eoliveira-daitan/go-challenges/internal/repository"
 	"github.com/joho/godotenv"
 )
+
+const (
+	ORM     = "ORM"
+	VANILLA = "VANILLA"
+)
+
+func initRepository(dbImpl string, cfg repository.DBConfig) (repository.Repository, error) {
+	switch dbImpl {
+	case VANILLA:
+		return repository.NewMySQLRepository(cfg)
+	case ORM:
+		return repository.NewOrmRepository(cfg)
+	}
+
+	return nil, fmt.Errorf("%q is not a valid option for env var DBIMPL.\nValid options (ORM and VANILLA).\nExample: DBIMPL=VANILLA", dbImpl)
+}
 
 func main() {
 	err := godotenv.Load()
@@ -22,9 +39,7 @@ func main() {
 		port = "3000"
 	}
 
-	var repo repository.Repository
-
-	cfg := repository.MysqlConfig{
+	cfg := repository.DBConfig{
 		User:   os.Getenv("DBUSER"),
 		Pass:   os.Getenv("DBPASS"),
 		Host:   os.Getenv("DBHOST"),
@@ -32,7 +47,10 @@ func main() {
 		DBName: os.Getenv("DBNAME"),
 	}
 
-	repo, err = repository.NewMySQLRepository(cfg)
+	dbImpl := strings.ToUpper(os.Getenv("DBIMPL"))
+
+	var repo repository.Repository
+	repo, err = initRepository(dbImpl, cfg)
 	handleErr(err)
 
 	server := api.New(repo)

@@ -13,3 +13,12 @@ type Repository interface {
 	CreateTask(task Task) (int64, error)
 	UpdateTask(id int64, task Task) (int64, error)
 }
+
+type DBConfig struct {
+	User     string
+	Pass     string
+	Protocol string
+	Host     string
+	Port     string
+	DBName   string
+}
