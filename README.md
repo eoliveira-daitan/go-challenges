@@ -43,3 +43,12 @@ To run the REST API Server, just run the following command:
 ```
 go run cmd/server/main.go
 ```
+
+### gRPC API Server
+
+To run the gRPC API Server, just run the following command:
+
+```
+go run cmd/grpc/main.go
+```
+
